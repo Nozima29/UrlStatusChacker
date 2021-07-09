@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container" style="padding: 20px">
+        <h1 class="text-center">Auto Status checker</h1>
+
+        <table class="table table-hover" style="margin-top: 30px">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">User</th>
+                <th scope="col">Link/Url</th>
+                <th scope="col">Status Code</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for url in urls %}
+            <tr {% if url.status_code == 200 %} class="bg-success" {% else %} class="bg-danger" {% endif %}>
+                <th scope="row">{{ url.id }}</th>
+                <td>{{ url.user }}</td>
+                <td><a href="#" data-statusUrl data-url="{{ url.url }}" style="color: white">{{ url.url }}</a></td>
+                <td>{{ url.status_code }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+
+            setInterval('refreshPage()', 10000);
+            var urls = []
+            $('[data-statusUrl]').each(function () {
+                var url = $(this).data('url')
+                urls.push(url)
+            })
+
+            $.ajax({
+                type: 'get',
+                url: '/',
+                data: {'urls': urls}
+            })
+        });
+
+        function refreshPage() {
+            location.reload();
+        }
+
+    </script>
+
+{% endblock %}
